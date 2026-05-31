@@ -1,0 +1,16 @@
+{
+  "name": "palm-lock-agent",
+  "version": "1.0.0",
+  "description": "Cầu nối giữa PMS web và khóa cửa khách sạn (LockSDK.dll) — chạy trên máy quầy Windows",
+  "main": "agent.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node agent.js",
+    "test-card": "node test-make-card.js"
+  },
+  "dependencies": {
+    "koffi": "^2.9.0",
+    "express": "^4.19.2",
+    "cors": "^2.8.5"
+  }
+}

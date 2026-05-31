@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test Lock Agent — Palm Hotel</title>
+  <style>
+    body { font-family: 'Be Vietnam Pro', system-ui, sans-serif; max-width: 560px; margin: 30px auto; padding: 0 16px; color: #1E293B; }
+    h1 { font-size: 20px; }
+    fieldset { border: 1px solid #E2E8F0; border-radius: 10px; margin-bottom: 16px; padding: 14px 16px; }
+    legend { font-weight: 700; padding: 0 6px; }
+    label { display: block; font-size: 13px; color: #64748B; margin: 8px 0 3px; }
+    input { width: 100%; padding: 8px 10px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 14px; box-sizing: border-box; }
+    button { background: #0B76EF; color: #fff; border: none; border-radius: 8px; padding: 10px 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+    button:hover { background: #095fc4; }
+    pre { background: #0F172A; color: #A7F3D0; padding: 12px; border-radius: 8px; font-size: 12px; white-space: pre-wrap; word-break: break-all; min-height: 40px; }
+    .row { display: flex; gap: 8px; }
+    .row > div { flex: 1; }
+    .ok { color: #10B981; font-weight: 700; }
+    .err { color: #EF4444; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>🔒 Test Lock Agent</h1>
+  <p style="font-size:13px;color:#64748B">Mở file này trực tiếp trên máy quầy (cùng máy chạy agent) để thử quẹt thẻ, không cần PMS.</p>
+
+  <fieldset>
+    <legend>Cấu hình</legend>
+    <label>Cổng agent</label>
+    <input id="port" value="2000" />
+    <button onclick="checkStatus()">Kiểm tra Agent (/status)</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Tạo thẻ</legend>
+    <div class="row">
+      <div>
+        <label>Mã khóa phòng (room)</label>
+        <input id="room" value="1.2.28" />
+      </div>
+      <div>
+        <label>Giờ trả phòng (checkout)</label>
+        <input id="checkout" value="2026-06-01 12:00:00" />
+      </div>
+    </div>
+    <button onclick="makeCard()">Tạo thẻ (/makecard)</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Đọc / Hủy thẻ</legend>
+    <button onclick="readCard()">Đọc thẻ (/readcard)</button>
+    <button onclick="getSnr()" style="background:#475569">Lấy serial (/getcardsnr)</button>
+    <button onclick="cancelCard()" style="background:#EF4444">Hủy thẻ (/cancelcard)</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Kết quả</legend>
+    <pre id="out">(chưa có)</pre>
+  </fieldset>
+
+  <script>
+    const out = document.getElementById('out');
+    const port = () => document.getElementById('port').value.trim() || '2000';
+    const base = () => `http://127.0.0.1:${port()}`;
+
+    async function call(url) {
+      out.textContent = 'Đang gọi: ' + url + '\n...';
+      try {
+        const r = await fetch(url);
+        const data = await r.json();
+        const tag = data.ok ? '✅ OK' : '❌ LỖI';
+        out.innerHTML = `<span class="${data.ok ? 'ok' : 'err'}">${tag}</span>\n` +
+          JSON.stringify(data, null, 2);
+      } catch (e) {
+        out.innerHTML = `<span class="err">❌ Không kết nối được agent</span>\n` +
+          `Kiểm tra: agent đã chạy chưa? đúng cổng ${port()}?\n${e.message}`;
+      }
+    }
+
+    function checkStatus() { call(`${base()}/status`); }
+    function getSnr()      { call(`${base()}/getcardsnr?format=json`); }
+    function readCard()    { call(`${base()}/readcard?format=json`); }
+    function cancelCard()  { call(`${base()}/cancelcard?format=json`); }
+    function makeCard() {
+      const room = encodeURIComponent(document.getElementById('room').value.trim());
+      const checkout = encodeURIComponent(document.getElementById('checkout').value.trim());
+      call(`${base()}/makecard?room=${room}&checkout=${checkout}&format=json`);
+    }
+  </script>
+</body>
+</html>
