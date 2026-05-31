@@ -16,8 +16,8 @@ module.exports = {
       watch: false,
       max_memory_restart: '200M',
       env: {
-        LOCK_AGENT_PORT: 2000,   // đổi cổng nếu cần
-        // LOCK_DLL_PATH: 'C:\\palm-lock-agent\\LockSDK.dll',  // chỉ cần nếu DLL ở nơi khác
+        LOCK_AGENT_PORT: 2000,
+        MOCK: '1',
       },
       // Log riêng cho agent (ngoài lock-agent.log do chính agent ghi)
       out_file: './pm2-out.log',
