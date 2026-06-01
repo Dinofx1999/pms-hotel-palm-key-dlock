@@ -1,2 +1,45 @@
 2026-05-31T21:44:29: [2026-05-31T14:44:29.575Z] Palm Lock Agent (ezcloud-like) chạy tại http://127.0.0.1:2000
 2026-05-31T21:44:29: [2026-05-31T14:44:29.577Z] Khởi động: chưa cấu hình được đầu đọc — Failed to load shared library: dlopen(/Users/phivunguyen/Desktop/PMS Hotel New/palm-lock-agent/LockSDK.dll, 0x0006): tried: '/Users/phivunguyen/Desktop/PMS Hotel New/palm-lock-agent/LockSDK.dll' (not a mach-o file), '/System/Volumes/Preboot/Cryptexes/OS/Users/phivunguyen/Desktop/PMS Hotel New/palm-lock-agent/LockSDK.dll' (no such file), '/Users/phivunguyen/Desktop/PMS Hotel New/palm-lock-agent/LockSDK.dll' (not a mach-o file) (thử lại khi có request)
+2026-05-31T23:24:55: [2026-05-31T16:24:55.654Z] Palm Lock Agent (ezcloud-like) chạy tại http://127.0.0.1:2000
+2026-05-31T23:24:55: [2026-05-31T16:24:55.656Z] Khởi động: cấu hình đầu đọc OK, lockType = 99
+2026-05-31T23:25:02: [2026-05-31T16:25:02.785Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"CF5B3036","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:25:08: [2026-05-31T16:25:08.289Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"503879B0","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:25:14: [2026-05-31T16:25:14.904Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"7ED8ED5E","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:25:27: [2026-05-31T16:25:27.261Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"F285F43F","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:38:59: [2026-05-31T16:38:59.856Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"2D4268E5","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:39:20: [2026-05-31T16:39:20.324Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"6FDC59DC","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:39:28: [2026-05-31T16:39:28.613Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"1D453038","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:39:31: [2026-05-31T16:39:31.888Z] makecard request: {"roomNo":"1.2.504","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:39:31: [2026-05-31T16:39:31.889Z] makecard result: {"ret":0,"ok":true,"cardSnr":"BD54BE91","mock":true,"roomNo":"1.2.504","checkoutTime":"2026-06-01 12:00:00"}
+2026-05-31T23:39:36: [2026-05-31T16:39:36.680Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"A61659B2","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:39:50: [2026-05-31T16:39:50.496Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"6A8808DB","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:39:51: [2026-05-31T16:39:51.988Z] makecard request: {"roomNo":"1.2.504","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:39:51: [2026-05-31T16:39:51.988Z] makecard result: {"ret":0,"ok":true,"cardSnr":"B34874CF","mock":true,"roomNo":"1.2.504","checkoutTime":"2026-06-01 12:00:00"}
+2026-05-31T23:39:52: [2026-05-31T16:39:52.947Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"82A17639","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:39:54: [2026-05-31T16:39:54.419Z] makecard request: {"roomNo":"1.2.504","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:39:54: [2026-05-31T16:39:54.420Z] makecard result: {"ret":0,"ok":true,"cardSnr":"3D3E5736","mock":true,"roomNo":"1.2.504","checkoutTime":"2026-06-01 12:00:00"}
+2026-05-31T23:39:55: [2026-05-31T16:39:55.238Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"23B569B4","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:39:55: [2026-05-31T16:39:55.857Z] makecard request: {"roomNo":"1.2.504","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:39:55: [2026-05-31T16:39:55.857Z] makecard result: {"ret":0,"ok":true,"cardSnr":"E4CCD4C4","mock":true,"roomNo":"1.2.504","checkoutTime":"2026-06-01 12:00:00"}
+2026-05-31T23:40:58: [2026-05-31T16:40:58.401Z] makecard request: {"roomNo":"1.2.504","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:40:58: [2026-05-31T16:40:58.402Z] makecard result: {"ret":0,"ok":true,"cardSnr":"CF37FD78","mock":true,"roomNo":"1.2.504","checkoutTime":"2026-06-01 12:00:00"}
+2026-05-31T23:41:00: [2026-05-31T16:41:00.554Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"ABF5740A","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:41:08: [2026-05-31T16:41:08.579Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"5C8039F0","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:41:11: [2026-05-31T16:41:11.893Z] makecard request: {"roomNo":"1.2.504","checkoutTime":"2026-06-01 15:00:00","iflags":0}
+2026-05-31T23:41:11: [2026-05-31T16:41:11.893Z] makecard result: {"ret":0,"ok":true,"cardSnr":"5DC80106","mock":true,"roomNo":"1.2.504","checkoutTime":"2026-06-01 15:00:00"}
+2026-05-31T23:41:12: [2026-05-31T16:41:12.991Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"3CA5C245","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:42:43: [2026-05-31T16:42:43.304Z] makecard request: {"roomNo":"1.2.201","checkoutTime":"2026-05-31 12:00:00","iflags":0}
+2026-05-31T23:42:43: [2026-05-31T16:42:43.306Z] makecard result: {"ret":0,"ok":true,"cardSnr":"1C839640","mock":true,"roomNo":"1.2.201","checkoutTime":"2026-05-31 12:00:00"}
+2026-05-31T23:42:57: [2026-05-31T16:42:57.748Z] makecard request: {"roomNo":"1.2.201","checkoutTime":"2026-05-31 12:00:00","iflags":0}
+2026-05-31T23:42:57: [2026-05-31T16:42:57.749Z] makecard result: {"ret":0,"ok":true,"cardSnr":"D45C3BDC","mock":true,"roomNo":"1.2.201","checkoutTime":"2026-05-31 12:00:00"}
+2026-05-31T23:53:14: [2026-05-31T16:53:14.027Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"AA9FC4CF","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:57:21: [2026-05-31T16:57:21.380Z] makecard request: {"roomNo":"1.2.504","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-05-31T23:57:21: [2026-05-31T16:57:21.381Z] makecard result: {"ret":0,"ok":true,"cardSnr":"AD53A63B","mock":true,"roomNo":"1.2.504","checkoutTime":"2026-06-01 12:00:00"}
+2026-05-31T23:59:47: [2026-05-31T16:59:47.821Z] makecard request: {"roomNo":"1.2.201","checkoutTime":"2026-05-31 12:00:00","iflags":0}
+2026-05-31T23:59:47: [2026-05-31T16:59:47.823Z] makecard result: {"ret":0,"ok":true,"cardSnr":"D1620991","mock":true,"roomNo":"1.2.201","checkoutTime":"2026-05-31 12:00:00"}
+2026-06-01T00:00:10: [2026-05-31T17:00:10.800Z] makecard request: {"roomNo":"1.2.201","checkoutTime":"2026-05-31 12:00:00","iflags":0}
+2026-06-01T00:00:10: [2026-05-31T17:00:10.801Z] makecard result: {"ret":0,"ok":true,"cardSnr":"07604ED2","mock":true,"roomNo":"1.2.201","checkoutTime":"2026-05-31 12:00:00"}
+2026-06-01T00:21:26: [2026-05-31T17:21:26.528Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"FACEFADE","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-06-01T00:21:30: [2026-05-31T17:21:30.657Z] readcard: {"ret":0,"ok":true,"mock":true,"cardSnr":"AA1B7F0F","roomNo":"1.2.28","checkinTime":"2026-05-31 14:00:00","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-06-01T00:21:39: [2026-05-31T17:21:39.538Z] makecard request: {"roomNo":"1.2.504","checkoutTime":"2026-06-01 12:00:00","iflags":0}
+2026-06-01T00:21:39: [2026-05-31T17:21:39.538Z] makecard result: {"ret":0,"ok":true,"cardSnr":"123A79FA","mock":true,"roomNo":"1.2.504","checkoutTime":"2026-06-01 12:00:00"}

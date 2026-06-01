@@ -14,6 +14,15 @@
 // ════════════════════════════════════════════════════════════════════
 const path = require('path');
 
+// ── Mã trả về của SDK (theo Defines.h) ───────────────────────────────
+//   OPR_OK = 1  → THÀNH CÔNG (không phải 0!). Các lỗi đều là số ÂM:
+//   NO_CARD=-1, CARD_TYPE_ERROR=-4, RDWR_ERROR=-5, COMM_ERROR=-12, ...
+//   ⚠ Trước đây code dùng ret===0 là sai → máy thật trả 1 bị hiểu nhầm là lỗi.
+const OPR_OK = 1;
+// Một số hàm khởi tạo (Configuration) ở vài bản SDK trả 0=OK. Chấp nhận cả 0 lẫn 1
+//   cho riêng configure để không phá luồng đang chạy được.
+const isOk = (ret) => ret === OPR_OK;
+
 const DLL_PATH = process.env.LOCK_DLL_PATH || path.join(__dirname, 'LockSDK.dll');
 const FORCE_MOCK = process.env.MOCK === '1' || process.env.MOCK === 'true';
 
@@ -41,10 +50,23 @@ function loadLib() {
       CancelCardEx2: lib.func('__stdcall', 'TP_CancelCardEx2', 'int', ['_Out_ char *', 'int']),
     };
   } catch (e) {
-    // Không nạp được DLL (sai OS/bit/thiếu file) → chuyển sang MOCK để không chặn dev.
-    mockMode = true;
-    console.warn('[lockSdk] Không nạp được DLL → chạy CHẾ ĐỘ GIẢ LẬP (mock).',
-      'Lý do:', e.message);
+    // ⚠ FIX: KHÔNG tự động rơi vào mock khi nạp DLL lỗi (trừ khi cho phép tường minh).
+    //   Trước đây lỗi DLL → âm thầm bật mock → trả ok GIẢ, lễ tân tưởng đã tạo thẻ
+    //   nhưng thẻ KHÔNG hề được ghi. Trên máy quầy thật phải BÁO LỖI RÕ.
+    //   Chỉ fallback mock nếu đặt ALLOW_MOCK_FALLBACK=1 (dùng cho dev trên Mac).
+    const allowFallback = process.env.ALLOW_MOCK_FALLBACK === '1';
+    if (allowFallback) {
+      mockMode = true;
+      console.warn('[lockSdk] Không nạp được DLL → CHẠY MOCK (ALLOW_MOCK_FALLBACK=1).',
+        'Lý do:', e.message);
+      return;
+    }
+    // Máy thật: ném lỗi để lộ nguyên nhân (thiếu DLL phụ, sai bit Node, sai đường dẫn...)
+    throw new Error(
+      `Không nạp được LockSDK.dll tại "${DLL_PATH}". ` +
+      `Kiểm tra: (1) Node 32-bit, (2) đủ các .dll phụ cùng thư mục, (3) đường dẫn DLL. ` +
+      `Chi tiết: ${e.message}`
+    );
   }
 }
 
@@ -68,13 +90,30 @@ function configure(preferType) {
     return 99;
   }
   const candidates = preferType ? [preferType] : [4, 5];
-  let lastRet = null;
+  const tries = [];
   for (const t of candidates) {
     const ret = fns.Configuration(t);
-    lastRet = ret;
-    if (ret === 0) { configuredType = t; return t; }
+    tries.push({ type: t, name: t === 4 ? 'RF57' : t === 5 ? 'RF50' : `type${t}`, ret });
+    if (ret === 0 || ret === OPR_OK) { configuredType = t; return t; }
   }
-  throw new Error(`TP_Configuration thất bại cho cả RF57/RF50 (mã lỗi cuối: ${lastRet})`);
+  const detail = tries.map(x => `${x.name}(type ${x.type})=${x.ret} [${errMsg(x.ret)}]`).join(', ');
+  throw new Error(`TP_Configuration thất bại — ${detail}`);
+}
+
+// Diễn giải mã lỗi SDK (theo Defines.h ERROR_TYPE)
+function errMsg(ret) {
+  const M = {
+    1: 'OK', '-1': 'Không thấy thẻ', '-2': 'Không thấy đầu đọc thẻ',
+    '-3': 'Thẻ không hợp lệ', '-4': 'Sai loại thẻ', '-5': 'Lỗi đọc/ghi',
+    '-6': 'Cổng chưa mở', '-8': 'Tham số không hợp lệ', '-9': 'Thao tác không hợp lệ',
+    '-10': 'Lỗi khác', '-11': 'Cổng đang bị chiếm (đóng phần mềm khoá khác)',
+    '-12': 'Lỗi giao tiếp', '-20': 'Sai mã khách hàng (authorization)',
+    '-29': 'Chưa đăng ký (chưa nạp thẻ授权/authorization)',
+    '-30': 'Không có thông tin thẻ授权 (authorization card)',
+    '-37': 'Sai loại đầu đọc', '-38': 'Lỗi CRC',
+  };
+  if (ret >= 8000) return `Lỗi thư viện RF50 (mã ${ret - 8000})`;
+  return M[String(ret)] ?? 'Không rõ';
 }
 
 function ensureConfigured() {
@@ -84,10 +123,10 @@ function ensureConfigured() {
 // ── Lấy serial thẻ ────────────────────────────────────────────────
 function getCardSnr() {
   ensureConfigured();
-  if (mockMode) return { ret: 0, ok: true, cardSnr: fakeSnr(), mock: true };
+  if (mockMode) return { ret: OPR_OK, ok: true, cardSnr: fakeSnr(), mock: true };
   const buf = outBuf(32);
   const ret = fns.GetCardSnr(buf);
-  return { ret, ok: ret === 0, cardSnr: readCStr(buf) };
+  return { ret, ok: isOk(ret), cardSnr: readCStr(buf) };
 }
 
 // ── Tạo thẻ khách ─────────────────────────────────────────────────
@@ -96,11 +135,11 @@ function makeGuestCard({ roomNo, checkinTime = '', checkoutTime, iflags = 0, wai
   if (!roomNo) throw new Error('Thiếu roomNo');
   if (!checkoutTime) throw new Error('Thiếu checkoutTime');
   if (mockMode) {
-    return { ret: 0, ok: true, cardSnr: fakeSnr(), mock: true, roomNo, checkoutTime };
+    return { ret: OPR_OK, ok: true, cardSnr: fakeSnr(), mock: true, roomNo, checkoutTime };
   }
   const snrBuf = outBuf(32);
   const ret = fns.MakeGuestCardEx2(snrBuf, String(roomNo), String(checkinTime), String(checkoutTime), iflags | 0, waitMs | 0);
-  return { ret, ok: ret === 0, cardSnr: readCStr(snrBuf) };
+  return { ret, ok: isOk(ret), cardSnr: readCStr(snrBuf) };
 }
 
 // ── Đọc thẻ ───────────────────────────────────────────────────────
@@ -108,7 +147,7 @@ function readGuestCard({ waitMs = 8000 } = {}) {
   ensureConfigured();
   if (mockMode) {
     return {
-      ret: 0, ok: true, mock: true,
+      ret: OPR_OK, ok: true, mock: true,
       cardSnr: fakeSnr(), roomNo: '1.2.28',
       checkinTime: '2026-05-31 14:00:00', checkoutTime: '2026-06-01 12:00:00',
       iflags: 0,
@@ -118,7 +157,7 @@ function readGuestCard({ waitMs = 8000 } = {}) {
   const iflags = outBuf(4);
   const ret = fns.ReadGuestCardEx2(snr, room, ci, co, iflags, waitMs | 0);
   return {
-    ret, ok: ret === 0,
+    ret, ok: isOk(ret),
     cardSnr: readCStr(snr), roomNo: readCStr(room),
     checkinTime: readCStr(ci), checkoutTime: readCStr(co),
     iflags: iflags.readInt32LE(0),
@@ -128,10 +167,10 @@ function readGuestCard({ waitMs = 8000 } = {}) {
 // ── Hủy thẻ ───────────────────────────────────────────────────────
 function cancelCard({ waitMs = 8000 } = {}) {
   ensureConfigured();
-  if (mockMode) return { ret: 0, ok: true, cardSnr: fakeSnr(), mock: true };
+  if (mockMode) return { ret: OPR_OK, ok: true, cardSnr: fakeSnr(), mock: true };
   const snrBuf = outBuf(32);
   const ret = fns.CancelCardEx2(snrBuf, waitMs | 0);
-  return { ret, ok: ret === 0, cardSnr: readCStr(snrBuf) };
+  return { ret, ok: isOk(ret), cardSnr: readCStr(snrBuf) };
 }
 
 module.exports = {

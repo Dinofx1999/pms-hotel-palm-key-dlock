@@ -103,3 +103,6 @@ Quản lý cấu hình + mã khóa phòng trong PMS: menu **Hệ thống → Kh�
 - Agent chỉ nghe `127.0.0.1` → không lộ ra mạng LAN/internet.
 - PMS chạy `https://` gọi `http://127.0.0.1` thường được trình duyệt cho phép (loopback).
   Nếu bị chặn, cho agent chạy HTTPS cert tự ký hoặc thêm ngoại lệ — bàn khi gặp.
+
+## tải node x32
+-https://nodejs.org/dist/v22.22.0/node-v22.22.0-x86.msi

@@ -17,7 +17,7 @@ module.exports = {
       max_memory_restart: '200M',
       env: {
         LOCK_AGENT_PORT: 2000,
-        MOCK: '1',
+        // MOCK: '1',
       },
       // Log riêng cho agent (ngoài lock-agent.log do chính agent ghi)
       out_file: './pm2-out.log',
