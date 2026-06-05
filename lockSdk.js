@@ -22,6 +22,10 @@ const OPR_OK = 1;
 // Một số hàm khởi tạo (Configuration) ở vài bản SDK trả 0=OK. Chấp nhận cả 0 lẫn 1
 //   cho riêng configure để không phá luồng đang chạy được.
 const isOk = (ret) => ret === OPR_OK;
+// ⭐ NEW 02/06/2026: Các mã lỗi cho biết đầu đọc CHƯA được nạp thẻ Authorization
+//   (client code / keys). -29: chưa đăng ký; -30: không có thông tin Auth; -20: sai mã KH.
+const AUTH_ERROR_CODES = [-29, -30, -20];
+const isAuthError = (ret) => AUTH_ERROR_CODES.includes(ret);
 
 const DLL_PATH = process.env.LOCK_DLL_PATH || path.join(__dirname, 'LockSDK.dll');
 const FORCE_MOCK = process.env.MOCK === '1' || process.env.MOCK === 'true';
@@ -180,6 +184,7 @@ function readGuestCard({ waitMs = 8000 } = {}) {
     iflags: iflagsVal,
     iflagsLabels: decodeFlags(iflagsVal),        // nhãn diễn giải iflags
     isMasterCard: ret === -4,                    // CARD_TYPE_ERROR → thẻ tổng/không phải thẻ khách
+    needsAuth: isAuthError(ret),                  // true → đầu đọc chưa nạp thẻ Authorization
     errMsg: errMsg(ret),                         // diễn giải mã ret
   };
 }
