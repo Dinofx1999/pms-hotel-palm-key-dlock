@@ -116,6 +116,22 @@ function errMsg(ret) {
   return M[String(ret)] ?? 'Không rõ';
 }
 
+// ── Diễn giải iflags (enum CARD_FLAGS) thành nhãn dễ đọc ───────────
+//   Từng bit có ý nghĩa riêng (cộng dồn). Tham chiếu Defines.h.
+const CARD_FLAG_BITS = [
+  { bit: 1,   label: 'Mở chốt trong (deadbolt)' },
+  { bit: 8,   label: 'Thẻ copy (không vô hiệu thẻ trước)' },
+  { bit: 16,  label: 'Thẻ ghi số phòng (import room)' },
+  { bit: 32,  label: 'Thẻ dùng 1 lần (one-time)' },
+  { bit: 64,  label: 'Quyền toàn tòa nhà' },
+  { bit: 128, label: 'Kiểm tra giờ nhận phòng' },
+];
+function decodeFlags(iflags) {
+  const n = Number(iflags) || 0;
+  const labels = CARD_FLAG_BITS.filter(f => (n & f.bit) !== 0).map(f => f.label);
+  return labels;
+}
+
 function ensureConfigured() {
   if (configuredType === null) configure();
 }
@@ -150,17 +166,21 @@ function readGuestCard({ waitMs = 8000 } = {}) {
       ret: OPR_OK, ok: true, mock: true,
       cardSnr: fakeSnr(), roomNo: '1.2.28',
       checkinTime: '2026-05-31 14:00:00', checkoutTime: '2026-06-01 12:00:00',
-      iflags: 0,
+      iflags: 16, iflagsLabels: decodeFlags(16), isMasterCard: false,
     };
   }
   const snr = outBuf(32), room = outBuf(32), ci = outBuf(40), co = outBuf(40);
   const iflags = outBuf(4);
   const ret = fns.ReadGuestCardEx2(snr, room, ci, co, iflags, waitMs | 0);
+  const iflagsVal = iflags.readInt32LE(0);
   return {
     ret, ok: isOk(ret),
     cardSnr: readCStr(snr), roomNo: readCStr(room),
     checkinTime: readCStr(ci), checkoutTime: readCStr(co),
-    iflags: iflags.readInt32LE(0),
+    iflags: iflagsVal,
+    iflagsLabels: decodeFlags(iflagsVal),        // nhãn diễn giải iflags
+    isMasterCard: ret === -4,                    // CARD_TYPE_ERROR → thẻ tổng/không phải thẻ khách
+    errMsg: errMsg(ret),                         // diễn giải mã ret
   };
 }
 

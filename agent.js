@@ -52,7 +52,9 @@ app.get('/status', (req, res) => {
   res.json({
     ok: true, service: 'palm-lock-agent', version: '1.1.0',
     protocol: 'ezcloud-like', port: PORT,
-    configuredType: lock.configuredType, pid: process.pid,
+    configuredType: lock.configuredType,
+    mock: lock.isMock,   // true = đang giả lập (chưa có DLL/phần cứng)
+    pid: process.pid,
   });
 });
 
@@ -63,8 +65,9 @@ app.get('/getlockconfig', (req, res) => {
   if (type === null) { try { type = lock.configure(); } catch { /* */ } }
   reply(req, res, {
     ok: type !== null,
-    lockType: type,                 // 4=RF57, 5=RF50
+    lockType: type,                 // 4=RF57, 5=RF50, 99=mock
     lockBrand: 'DLOCK',
+    mock: lock.isMock,
     agentVersion: '1.1.0',
     port: PORT,
   });
@@ -88,6 +91,11 @@ app.get('/readcard', (req, res) => {
   try {
     const waitMs = parseInt(req.query.waitMs) || 8000;
     const r = lock.readGuestCard({ waitMs });
+    // Thêm 'expired': so giờ checkout trên thẻ với giờ hiện tại của máy quầy.
+    if (r && r.ok && r.checkoutTime) {
+      const co = new Date(String(r.checkoutTime).replace(' ', 'T')).getTime();
+      r.expired = !isNaN(co) ? (co < Date.now()) : null;
+    }
     log('readcard:', r);
     reply(req, res, r);
   } catch (e) {
